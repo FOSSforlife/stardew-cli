@@ -22,6 +22,9 @@ export class CropsCommand<U extends MyOptions> implements CommandModule<{}, U> {
     let miniSearch = new MiniSearch({
       fields: ['name', 'seed.name'], // fields to index for full-text search
       storeFields: ['name', 'price', 'phaseDays'], // fields to return with search results
+      searchOptions: {
+        fuzzy: 0.2,
+      },
     });
 
     // Index all documents
