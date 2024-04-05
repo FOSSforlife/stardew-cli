@@ -1,31 +1,12 @@
 // Usage: tsx main.ts crops parsnip
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import MiniSearch from 'minisearch';
-import crops from './data/crops.json';
+import { CropsCommand } from './commands/crops';
 
-let miniSearch = new MiniSearch({
-  fields: ['name', 'seed.name'], // fields to index for full-text search
-  storeFields: ['name', 'price', 'phaseDays'], // fields to return with search results
-});
+const yargsParser = yargs(hideBin(process.argv));
 
-// Index all documents
-miniSearch.addAll(
-  Object.values(crops).map((crop) => ({ ...crop, id: crop.indexOfHarvest }))
-);
+for (const command of [new CropsCommand()]) {
+  yargsParser.command(command);
+}
 
-yargs(hideBin(process.argv))
-  .command(
-    'crops [query]',
-    'search for crops',
-    (yargs) => {
-      return yargs.positional('query', {
-        describe: 'query',
-      });
-    },
-    (argv) => {
-      let results = miniSearch.search(argv.query as string);
-      console.log(results);
-    }
-  )
-  .parse();
+yargsParser.parse();
